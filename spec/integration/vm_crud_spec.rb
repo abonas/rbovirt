@@ -8,7 +8,7 @@ shared_examples_for "Basic VM Life cycle" do
     name = 'vm-'+Time.now.to_i.to_s
     @vm = @client.create_vm(:name => name, :template => @template_id, :cluster => @cluster)
     @client.add_volume(@vm.id)
-    @client.add_interface(@vm.id, :network_name => 'rhevm')
+    @client.add_interface(@vm.id, :network_name => @network_name)
     while !@client.vm(@vm.id).ready? do
     end
   end
@@ -71,7 +71,7 @@ end
 describe "Admin API VM Life cycle" do
 
   before(:all) do
-    user, password, url, datacenter = endpoint
+    user, password, url, datacenter, @network_name = endpoint
     opts = {:datacenter_id => datacenter, :ca_cert_file =>  "#{File.dirname(__FILE__)}/../ca_cert.pem"}
     @client = ::OVIRT::Client.new(user, password, url, opts)
   end
@@ -84,7 +84,7 @@ end
 describe "User API VM Life cycle" do
 
   before(:all) do
-    user, password, url, datacenter = endpoint
+    user, password, url, datacenter, @network_name = endpoint
     opts = {:datacenter_id => datacenter,
             :ca_cert_file =>  "#{File.dirname(__FILE__)}/../ca_cert.pem",
             :filtered_api => support_user_level_api}
